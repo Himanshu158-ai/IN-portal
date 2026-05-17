@@ -1,10 +1,12 @@
 ﻿import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { Howl } from "howler";
+
 
 
 function OTP() {
 
-  // GENERATE RANDOM OTP
+  // OTP GENERATOR
 
   const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000)
@@ -15,36 +17,54 @@ function OTP() {
   // STATES
 
   const [otp, setOtp] = useState(generateOTP());
-  const [popupScale, setPopupScale] = useState(0);
 
-  const [timer, setTimer] = useState(20);
+  const [timer, setTimer] = useState(30);
 
-  const [inputs, setInputs] = useState(["", "", "", "", "", ""]);
-
-  const [positions, setPositions] = useState([0, 1, 2, 3, 4, 5]);
+  const [inputs, setInputs] = useState([
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ]);
 
   const [message, setMessage] = useState("");
 
   const [showPopup, setShowPopup] = useState(true);
 
-  const [securityNotice, setSecurityNotice] = useState(false);
+  const [randomPopups, setRandomPopups] = useState([]);
 
+
+  // SIDEWAYS SCROLL 😭💀
 
   useEffect(() => {
 
-  if (securityNotice) {
+    const handleWheel = (e) => {
 
-    const timeout = setTimeout(() => {
+      window.scrollBy({
+        left: e.deltaY * 2,
+        top: 0,
+        behavior: "smooth"
+      });
+    };
 
-      setSecurityNotice(false);
+    window.addEventListener(
+      "wheel",
+      handleWheel
+    );
 
-    }, 3500);
+    return () => {
 
-    return () => clearTimeout(timeout);
-  }
+      window.removeEventListener(
+        "wheel",
+        handleWheel
+      );
+    };
 
-}, [securityNotice]);
-  // AUTO OTP CHANGE 😭
+  }, []);
+
+  // TIMER 😭
 
   useEffect(() => {
 
@@ -58,19 +78,22 @@ function OTP() {
 
           setOtp(newOtp);
 
-          setInputs(["", "", "", "", "", ""]);
-
-          setPositions([0, 1, 2, 3, 4, 5]);
-
-          setSecurityNotice(true);
-
-          setPopupScale((prev) => prev + 1);
+          setInputs([
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]);
 
           setMessage(
-            "🔒 Security update from Modi Ji just for you 🇮🇳 OTP changed automatically."
+            "⚠ OTP automatically regenerated for national security."
           );
 
-          return 20;
+          glitchSound.play();
+
+          return 30;
         }
 
         return prev - 1;
@@ -82,52 +105,81 @@ function OTP() {
 
   }, []);
 
-  // HIDE NOTICE
+  // USER INPUT SHUFFLE 😭🔥
 
   useEffect(() => {
-
-    if (securityNotice) {
-
-      const timeout = setTimeout(() => {
-        setSecurityNotice(false);
-      }, 5000);
-
-      return () => clearTimeout(timeout);
-    }
-
-  }, [securityNotice]);
-
-  // SHUFFLE INPUTS FIRST 15 SEC 😭
-
-  useEffect(() => {
-
-    if (timer <= 5) return;
 
     const interval = setInterval(() => {
 
-      setPositions((prev) => {
+      setInputs((prev) => {
 
-        const updated = [...prev];
+        const shuffled = [...prev];
 
-        const a = Math.floor(Math.random() * 6);
-        const b = Math.floor(Math.random() * 6);
+        for (
+          let i = shuffled.length - 1;
+          i > 0;
+          i--
+        ) {
 
-        [updated[a], updated[b]] =
-          [updated[b], updated[a]];
+          const j =
+            Math.floor(Math.random() * (i + 1));
 
-        return updated;
+          [shuffled[i], shuffled[j]] =
+            [shuffled[j], shuffled[i]];
+        }
+
+        return shuffled;
       });
 
-    }, 1200);
+      glitchSound.play();
+
+    }, 10000);
 
     return () => clearInterval(interval);
 
-  }, [timer]);
+  }, []);
+
+  // RANDOM GOVT POPUPS 😭
+
+  useEffect(() => {
+
+    const messages = [
+      "Server under maintenance",
+      "Citizen score updated",
+      "Authentication synced nationally",
+      "Do not refresh page",
+      "Patriotism level unstable",
+      "Background verification active",
+      "Delhi server overloaded",
+      "Identity processing delayed",
+    ];
+
+    const interval = setInterval(() => {
+
+      const popup = {
+        id: Date.now(),
+
+        text:
+          messages[
+          Math.floor(Math.random() * messages.length)
+          ],
+
+        top: Math.random() * 80,
+
+        left: Math.random() * 80,
+      };
+
+      setRandomPopups((prev) => [...prev, popup]);
+
+    }, 3500);
+
+    return () => clearInterval(interval);
+
+  }, []);
 
   // VERIFY
 
   const handleVerify = () => {
-
     const entered = inputs.join("");
 
     const real = otp.join("");
@@ -150,7 +202,85 @@ function OTP() {
 
   return (
 
-    <div className="min-h-screen overflow-hidden bg-gradient-to-br from-yellow-200 via-red-200 to-pink-300 relative">
+    <div className="
+      min-h-screen
+      overflow-x-auto
+      overflow-y-hidden
+      bg-gradient-to-br
+      from-yellow-200
+      via-red-200
+      to-pink-300
+      relative
+    ">
+
+      {/* RANDOM POPUPS 😭 */}
+
+      {randomPopups.map((popup) => (
+
+        <motion.div
+
+          key={popup.id}
+
+          initial={{
+            opacity: 0,
+            scale: 0.5
+          }}
+
+          animate={{
+            opacity: 1,
+            scale: 1
+          }}
+
+          className="
+            fixed
+            z-50
+            bg-white
+            border-[4px]
+            border-blue-900
+            shadow-2xl
+
+            w-[160px]
+            sm:w-[220px]
+
+            p-3
+          "
+
+          style={{
+            top: `${popup.top}%`,
+            left: `${popup.left}%`
+          }}
+
+        >
+
+          <div className="
+            bg-blue-900
+            text-white
+            px-2
+            py-1
+            text-xs
+            sm:text-sm
+            font-bold
+            mb-2
+          ">
+
+            Government Notice
+
+          </div>
+
+          <p className="
+            text-xs
+            sm:text-sm
+            font-semibold
+            text-gray-700
+          ">
+
+            {popup.text}
+
+          </p>
+
+        </motion.div>
+
+      ))}
 
       {/* HEADER */}
 
@@ -159,10 +289,13 @@ function OTP() {
         from-orange-500
         via-white
         to-green-500
+
         p-4
         sm:p-5
+
         border-b-[8px]
         border-red-700
+
         shadow-2xl
       ">
 
@@ -179,8 +312,12 @@ function OTP() {
           <div>
 
             <h1 className="
-              text-2xl
-              sm:text-4xl
+              text-lg
+              sm:text-2xl
+              md:text-3xl
+              lg:text-4xl
+
+              leading-tight
               font-black
               text-blue-900
             ">
@@ -205,12 +342,19 @@ function OTP() {
           <button className="
             bg-red-700
             text-white
-            px-5
-            py-3
+
+            px-4
+            py-2
+
+            sm:px-5
+            sm:py-3
+
             border-[5px]
             border-yellow-300
+
             font-black
             shadow-xl
+
             text-sm
             sm:text-base
           ">
@@ -232,209 +376,24 @@ function OTP() {
         className="
           bg-black
           text-yellow-300
+
           text-sm
-          sm:text-2xl
+          sm:text-lg
+          lg:text-2xl
+
           p-3
           font-bold
         "
 
       >
 
-        ⚠ OTP boxes will rearrange for national security ⚠
-        Please remain calm citizen 🇮🇳 ⚠
-        Security Enhancement Activated By Modi Ji ⚠
+        ⚠ OTP input values shuffle every 10 seconds ⚠
+        Please stay calm citizen 🇮🇳 ⚠
+        National verification in progress ⚠
 
       </marquee>
 
-      {/* MODI SECURITY NOTICE 😭 */}
-
-
-{/* NATIONAL SECURITY POPUP ATTACK 😭 */}
-
-<AnimatePresence>
-
-  {securityNotice && (
-
-    <motion.div
-
-      initial={{
-        scale: 0,
-        opacity: 0
-      }}
-
-      animate={{
-        scale: 1 + popupScale * 0.15,
-        opacity: 1
-      }}
-
-      exit={{
-        opacity: 0
-      }}
-
-      transition={{
-        duration: 0.6
-      }}
-
-      className="
-        fixed
-        inset-0
-        z-[999]
-        flex
-        items-center
-        justify-center
-        pointer-events-none
-      "
-
-    >
-
-      <div className="
-        bg-white
-        border-[10px]
-        border-red-700
-        shadow-[0_0_80px_rgba(255,0,0,0.8)]
-        w-[90%]
-        sm:w-[700px]
-        overflow-hidden
-      ">
-
-        {/* HEADER */}
-
-        <div className="
-          bg-red-700
-          text-white
-          px-6
-          py-4
-          text-xl
-          sm:text-3xl
-          font-black
-          animate-pulse
-        ">
-
-          ⚠ NATIONAL SECURITY UPDATE ⚠
-
-        </div>
-
-        {/* BODY */}
-
-        <div className="
-          p-6
-          sm:p-10
-          bg-yellow-100
-          relative
-        ">
-
-          {/* FLOATING MODI 😭 */}
-
-          <motion.img
-
-            animate={{
-              rotate: [0, 4, -4, 0],
-              scale: [1, 1.05, 1]
-            }}
-
-            transition={{
-              repeat: Infinity,
-              duration: 1.5
-            }}
-
-            src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Prime_Minister_Narendra_Modi_in_2024.jpg"
-
-            className="
-              w-28
-              h-36
-              sm:w-40
-              sm:h-52
-              object-cover
-              border-[6px]
-              border-white
-              shadow-2xl
-              mx-auto
-              mb-6
-            "
-
-          />
-
-          <h2 className="
-            text-2xl
-            sm:text-5xl
-            text-center
-            font-black
-            text-red-700
-            leading-tight
-          ">
-
-            OTP HAS BEEN UPGRADED
-            FOR EXTRA SECURITY 🇮🇳
-
-          </h2>
-
-          <p className="
-            mt-6
-            text-center
-            text-lg
-            sm:text-2xl
-            font-bold
-            text-gray-700
-            leading-9
-          ">
-
-            Dear Citizen,
-
-            <br />
-
-            Modi Ji noticed suspicious patriotism levels
-            in your authentication process.
-
-            <br /><br />
-
-            Your previous OTP has been invalidated automatically.
-
-          </p>
-
-          {/* BLINKING WARNING 😭 */}
-
-          <motion.div
-
-            animate={{
-              opacity: [1, 0, 1]
-            }}
-
-            transition={{
-              repeat: Infinity,
-              duration: 0.6
-            }}
-
-            className="
-              mt-8
-              bg-black
-              text-yellow-300
-              text-center
-              p-5
-              text-lg
-              sm:text-2xl
-              font-black
-              border-[5px]
-              border-red-600
-            "
-
-          >
-
-            PLEASE MEMORISE NEW OTP IMMEDIATELY 😭
-
-          </motion.div>
-
-        </div>
-
-      </div>
-
-    </motion.div>
-
-  )}
-
-</AnimatePresence>
-      
-
-      {/* RANDOM POPUP 😭 */}
+      {/* FLOATING POPUP 😭 */}
 
       {showPopup && (
 
@@ -450,15 +409,20 @@ function OTP() {
 
           className="
             fixed
-            top-40
-            left-3
+            top-36
+            left-2
             sm:left-10
-            w-[260px]
+
+            w-[220px]
             sm:w-[320px]
+
             bg-white
-            border-[6px]
+            border-[5px]
+            sm:border-[6px]
+
             border-red-700
             shadow-2xl
+
             z-40
           "
 
@@ -502,15 +466,18 @@ function OTP() {
           </div>
 
           <div className="
-            p-5
+            p-4
+            sm:p-5
+
             text-sm
             sm:text-lg
+
             font-bold
             text-gray-700
             leading-7
           ">
 
-            Please remember your OTP before it changes again 😭
+            Please remember your OTP before it starts moving 😭
 
           </div>
 
@@ -518,59 +485,40 @@ function OTP() {
 
       )}
 
-      {/* FLOATING MODI 😭 */}
-
-      <motion.img
-
-        animate={{
-          y: [0, -12, 0],
-          rotate: [0, 2, -2, 0]
-        }}
-
-        transition={{
-          repeat: Infinity,
-          duration: 3
-        }}
-
-        src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Prime_Minister_Narendra_Modi_in_2024.jpg"
-
-        className="
-          fixed
-          right-2
-          top-28
-          w-24
-          h-32
-          sm:w-40
-          sm:h-52
-          object-cover
-          border-[5px]
-          sm:border-[8px]
-          border-white
-          shadow-2xl
-          z-30
-        "
-
-      />
-
-      {/* MAIN */}
+      {/* MAIN 😭 */}
 
       <div className="
-        max-w-5xl
+        min-w-[1200px]
+        lg:min-w-0
+
+        w-full
+        max-w-7xl
+
         mx-auto
-        mt-8
-        sm:mt-12
-        mb-20
-        px-3
-        sm:px-6
+
+        mt-4
+        sm:mt-8
+        lg:mt-12
+
+        mb-10
+        sm:mb-20
+
+        px-2
+        sm:px-4
+        lg:px-6
       ">
 
         <div className="
           bg-white
+
           border-[6px]
           sm:border-[10px]
+
           border-blue-900
+
           shadow-2xl
-          p-5
+
+          p-4
           sm:p-10
         ">
 
@@ -588,8 +536,10 @@ function OTP() {
             <div>
 
               <h2 className="
-                text-3xl
-                sm:text-5xl
+                text-2xl
+                sm:text-4xl
+                lg:text-5xl
+
                 font-black
                 text-red-700
               ">
@@ -601,11 +551,12 @@ function OTP() {
               <p className="
                 text-gray-600
                 mt-3
+
                 text-sm
                 sm:text-base
               ">
 
-                Complete verification before OTP migrates.
+                Complete verification before confusion increases.
 
               </p>
 
@@ -627,12 +578,18 @@ function OTP() {
               className="
                 bg-black
                 text-lime-400
-                text-3xl
-                sm:text-5xl
+
+                text-2xl
+                sm:text-3xl
+                md:text-4xl
+                lg:text-5xl
+
                 px-5
                 py-4
+
                 border-[5px]
                 border-yellow-400
+
                 font-black
                 text-center
               "
@@ -645,7 +602,7 @@ function OTP() {
 
           </div>
 
-          {/* OTP DISPLAY */}
+          {/* OTP DISPLAY 😭 */}
 
           <motion.div
 
@@ -662,8 +619,10 @@ function OTP() {
               bg-yellow-100
               border-[5px]
               border-orange-500
+
               p-5
               sm:p-8
+
               mb-16
             "
 
@@ -672,6 +631,7 @@ function OTP() {
             <div className="
               text-lg
               sm:text-xl
+
               font-bold
               mb-6
               text-gray-700
@@ -684,8 +644,10 @@ function OTP() {
             <div className="
               flex
               justify-center
+
               gap-2
               sm:gap-5
+
               flex-wrap
             ">
 
@@ -696,7 +658,9 @@ function OTP() {
                   key={index}
 
                   animate={{
-                    y: [0, -10, 0]
+                    y: [0, -10, 0],
+                    opacity: [1, 0.6, 1],
+                    x: [0, 3, -3, 0]
                   }}
 
                   transition={{
@@ -707,19 +671,28 @@ function OTP() {
                   className="
                     w-12
                     h-16
-                    sm:w-20
-                    sm:h-24
+                    text-3xl
+
+                    sm:w-16
+                    sm:h-20
+                    sm:text-4xl
+
+                    lg:w-20
+                    lg:h-24
+                    lg:text-5xl
+
                     bg-black
                     text-lime-400
+
                     flex
                     items-center
                     justify-center
-                    text-3xl
-                    sm:text-5xl
+
                     font-black
-                    border-[4px]
-                    sm:border-[5px]
+
+                    border-[5px]
                     border-red-600
+
                     shadow-xl
                   "
 
@@ -737,7 +710,17 @@ function OTP() {
 
           {/* HUGE GAP 😭 */}
 
-          <div className="h-[350px] sm:h-[600px] relative">
+          <div className="
+            h-[250px]
+
+            sm:h-[400px]
+
+            md:h-[500px]
+
+            lg:h-[700px]
+
+            relative
+          ">
 
             <motion.img
 
@@ -755,11 +738,13 @@ function OTP() {
               className="
                 absolute
                 inset-0
+
                 w-full
                 h-full
+
                 object-cover
-                border-[8px]
-                sm:border-[12px]
+
+                border-[12px]
                 border-yellow-400
               "
             />
@@ -768,22 +753,30 @@ function OTP() {
               absolute
               bottom-3
               left-3
+
               bg-black/70
               text-white
-              px-4
-              py-3
+
+              px-3
+              py-2
+
+              sm:px-4
+              sm:py-3
+
               text-sm
-              sm:text-2xl
+              sm:text-lg
+              lg:text-2xl
+
               font-black
             ">
 
-              KEEP SCROLLING CITIZEN 🇮🇳
+              SCROLL RIGHT TO CONTINUE 🇮🇳
 
             </div>
 
           </div>
 
-          {/* INPUT SECTION */}
+          {/* INPUT SECTION 😭 */}
 
           <div className="mt-16">
 
@@ -791,6 +784,7 @@ function OTP() {
               bg-red-50
               border
               border-red-300
+
               p-5
               mb-8
             ">
@@ -809,12 +803,13 @@ function OTP() {
                 text-gray-700
                 mt-2
                 leading-7
+
                 text-sm
                 sm:text-base
               ">
 
-                OTP boxes will rearrange for first 15 seconds.
-                Last 5 seconds are stable for emotional recovery.
+                Enter key moves to next box.
+                Input values shuffle every 10 seconds.
 
               </p>
 
@@ -825,25 +820,24 @@ function OTP() {
             <div className="
               flex
               justify-center
-              gap-3
+
+              gap-2
+              sm:gap-4
+
               flex-wrap
+
               mb-10
             ">
 
-              {positions.map((pos, visualIndex) => (
+              {inputs.map((value, index) => (
 
                 <motion.input
 
-                  key={visualIndex}
+                  key={index}
 
                   animate={{
-                    rotate: timer > 5
-                      ? [0, 6, -6, 0]
-                      : 0,
-
-                    x: timer > 5
-                      ? [0, 4, -4, 0]
-                      : 0
+                    rotate: [0, 6, -6, 0],
+                    x: [0, 4, -4, 0]
                   }}
 
                   transition={{
@@ -854,7 +848,7 @@ function OTP() {
 
                   maxLength={1}
 
-                  value={inputs[pos]}
+                  value={value}
 
                   onChange={(e) => {
 
@@ -864,25 +858,52 @@ function OTP() {
 
                     const updated = [...inputs];
 
-                    updated[pos] = val;
+                    updated[index] = val;
 
                     setInputs(updated);
                   }}
 
+                  onKeyDown={(e) => {
+
+                    if (e.key === "Enter") {
+
+                      const next =
+                        e.target.nextElementSibling;
+
+                      if (next) {
+
+                        next.focus();
+                      }
+                    }
+                  }}
+
                   className="
-                    w-14
+                    w-12
                     h-16
-                    sm:w-20
-                    sm:h-24
-                    border-[4px]
-                    border-blue-900
-                    text-center
                     text-3xl
-                    sm:text-5xl
+
+                    sm:w-16
+                    sm:h-20
+                    sm:text-4xl
+
+                    lg:w-20
+                    lg:h-24
+                    lg:text-5xl
+
+                    border-[4px]
+                    sm:border-[5px]
+
+                    border-blue-900
+
+                    text-center
                     font-black
+
                     bg-white
+
                     shadow-xl
+
                     outline-none
+
                     focus:bg-yellow-100
                   "
 
@@ -912,16 +933,24 @@ function OTP() {
                   bg-green-600
                   hover:bg-red-700
                   text-white
-                  px-8
-                  py-4
-                  sm:px-10
-                  sm:py-5
-                  text-xl
-                  sm:text-2xl
+
+                  px-5
+                  py-3
+                  text-lg
+
+                  sm:px-8
+                  sm:py-4
+                  sm:text-xl
+
+                  lg:px-10
+                  lg:py-5
+                  lg:text-2xl
+
                   font-black
-                  border-[5px]
-                  sm:border-[6px]
+
+                  border-[6px]
                   border-black
+
                   shadow-2xl
                 "
 
@@ -949,14 +978,21 @@ function OTP() {
 
                 className="
                   mt-10
+
                   bg-black
                   text-yellow-300
-                  p-5
+
+                  p-4
                   sm:p-6
+
                   text-center
+
                   text-lg
-                  sm:text-2xl
+                  sm:text-xl
+                  lg:text-2xl
+
                   font-black
+
                   border-[5px]
                   border-red-600
                 "
