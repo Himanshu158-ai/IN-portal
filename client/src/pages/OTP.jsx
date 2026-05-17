@@ -1,10 +1,11 @@
 ﻿import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Howl } from "howler";
+import { useNavigate } from "react-router-dom";
 
 
 
 function OTP() {
+  const navigate = useNavigate();
 
   // OTP GENERATOR
 
@@ -91,8 +92,6 @@ function OTP() {
             "⚠ OTP automatically regenerated for national security."
           );
 
-          glitchSound.play();
-
           return 30;
         }
 
@@ -131,7 +130,6 @@ function OTP() {
         return shuffled;
       });
 
-      glitchSound.play();
 
     }, 10000);
 
@@ -189,6 +187,8 @@ function OTP() {
       setMessage(
         "✅ Verification successful 🇮🇳"
       );
+
+      navigate("/application");
 
     }
 
@@ -477,7 +477,7 @@ function OTP() {
             leading-7
           ">
 
-            Please remember your OTP before it starts moving 😭
+            Please remember your OTP before it starts moving
 
           </div>
 
