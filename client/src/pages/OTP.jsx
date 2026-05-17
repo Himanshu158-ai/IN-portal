@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import modiPortrait from "../assets/modi_portrait.png";
 
 function OTP() {
   const navigate = useNavigate();
@@ -415,7 +416,7 @@ function OTP() {
             <motion.img
               animate={{ rotate: [0, 1, -1, 0] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              src="https://images.news18.com/ibnlive/uploads/2024/03/narendra-modi-2024-03-5c16f1dd75d95c0f0919e6a695e1e9d.jpg"
+              src={modiPortrait}
               className="
                 absolute
                 inset-0
