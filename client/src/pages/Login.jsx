@@ -65,7 +65,7 @@ function Login() {
             </div>
 
             <div className="flex justify-center mt-8 sm:mt-10">
-              <MovingButton onclick={() => navigate("/otp")} />
+              <MovingButton />
             </div>
 
           </form>
